@@ -15,8 +15,8 @@ ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 timedatectl set-timezone Europe/Moscow
 
 echo 'Отключаем флуд сообщений в /var/log/messages'
-/etc/rsyslog.d && mcedit ignore-systemd-session-slice.conf
-if $programname == "systemd" and ($msg contains "Starting Session" or $msg contains "Started Session" or $msg contains "Created slice" or $msg contains "Starting user-" or $msg contains "Starting User Slice of" or $msg contains "Removed session" or $msg contains "Removed slice User Slice of" or $msg contains "Stopping User Slice of") then stop
+touch /etc/rsyslog.d/ignore-systemd-session-slice.conf 
+echo 'if $programname == "systemd" and ($msg contains "Starting Session" or $msg contains "Started Session" or $msg contains "Created slice" or $msg contains "Starting user-" or $msg contains "Starting User Slice of" or $msg contains "Removed session" or $msg contains "Removed slice User Slice of" or $msg contains "Stopping User Slice of") then stop' >> /etc/rsyslog.d/ignore-systemd-session-slice.conf
 systemctl restart rsyslog
 
 echo 'Отключить SELinux'
