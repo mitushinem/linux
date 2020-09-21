@@ -43,4 +43,7 @@ mysql -uroot -p'qwer1234++' zabbix_proxy -e "set global innodb_strict_mode='OFF'
 zcat /usr/share/doc/zabbix-proxy-mysql*/schema.sql.gz |  mysql -uzabbix -p'qwer1234++' zabbix_proxy
 mysql -uroot -p'rootDBpass' zabbix_proxy -e "set global innodb_strict_mode='ON';"
 
+#sudo sed -i 's/ /' /etc/zabbix/zabbix_proxy.conf
+
+
 reboot
