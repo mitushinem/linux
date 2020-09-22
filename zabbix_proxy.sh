@@ -25,20 +25,8 @@ echo 'Настройка веб управления'
 systemctl start cockpit.socket
 systemctl enable cockpit.socket
 
-echo 'Настройка правил фаервола'
-systemctl enable firewalld
-systemctl status firewalld
-firewall-cmd -–add-service=ssh --permanent
-firewall-cmd --add-service={http,https} --permanent
-firewall-cmd --add-port={10051/tcp,10050/tcp} --permanent
-firewall-cmd --add-port={3306/tcp} --permanent
-firewall-cmd --add-service=cockpit --permanent
-firewall-cmd --reload
-
 sudo sed -i '$a alias netstat="netstat -tulpn"' ./.bashrc
 source ./.bashrc
-
-
 
 echo 'Установка Zabbix proxy 5.0.1'
 
@@ -54,7 +42,23 @@ mysql -uroot -p'rootDBpass' zabbix_proxy -e "set global innodb_strict_mode='OFF'
 zcat /usr/share/doc/zabbix-proxy-mysql*/schema.sql.gz |  mysql -uzabbix -p'zabbixDBpass' zabbix_proxy
 mysql -uroot -p'rootDBpass' zabbix_proxy -e "set global innodb_strict_mode='ON';"
 
-#sudo sed -i 's/ /' /etc/zabbix/zabbix_proxy.conf
+sed -i 's/Server=127.0.0.1/Server=88.135.48.186/' /etc/zabbix/zabbix_proxy.conf
+sed -i 's/Hostname=Zabbix proxy/Hostname=Proxy_0X/' /etc/zabbix/zabbix_proxy.conf
+sed -i 's/# DBPassword=/DBPassword=zabbixDBpass/' /etc/zabbix/zabbix_proxy.conf
+sed -i 's/# StartVMwareCollectors=0/StartVMwareCollectors=5/' /etc/zabbix/zabbix_proxy.conf
+sed -i 's/# VMwareFrequency=60/VMwareFrequency=60/' /etc/zabbix/zabbix_proxy.conf
+sed -i 's/# VMwareCacheSize=8M/VMwareCacheSize=64M/' /etc/zabbix/zabbix_proxy.conf
 
+systemctl restart zabbix-proxy
+systemctl enable zabbix-proxy
 
+echo 'Настройка правил фаервола'
+systemctl enable firewalld
+
+firewall-cmd -–add-service=ssh --permanent
+firewall-cmd --add-service={http,https} --permanent
+firewall-cmd --add-port={10051/tcp,10050/tcp} --permanent
+firewall-cmd --zone=public --add-service=mysql --permanent
+
+firewall-cmd --reload
 #reboot
