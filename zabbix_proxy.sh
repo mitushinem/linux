@@ -59,7 +59,6 @@ firewall-cmd -–add-service=ssh --permanent
 firewall-cmd --add-service={http,https} --permanent
 firewall-cmd --add-port={10051/tcp,10050/tcp} --permanent
 firewall-cmd --zone=public --add-service=mysql --permanent
-firewall-cmd --add-service=cockpit --permanent
 
 firewall-cmd --reload
 reboot
