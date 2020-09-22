@@ -61,4 +61,4 @@ firewall-cmd --add-port={10051/tcp,10050/tcp} --permanent
 firewall-cmd --zone=public --add-service=mysql --permanent
 
 firewall-cmd --reload
-#reboot
+reboot
