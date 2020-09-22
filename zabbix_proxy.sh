@@ -2,11 +2,10 @@ echo 'Обновление системы'
 dnf install -y epel-release
 dnf check-update
 dnf update -y
-#dnf clean all
+dnf clean all
 
 echo 'Отключить SELinux'
 setenforce 0 && sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
-#sudo sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/sysconfig/selinux
 
 echo 'Ставим нужные пакеты'
 dnf install -y mc vim net-tools curl bind-utils network-scripts cockpit iptables-services iftop htop lsof wget bzip2 traceroute gdisk bash-completion
@@ -42,6 +41,7 @@ mysql -uroot -p'rootDBpass' zabbix_proxy -e "set global innodb_strict_mode='OFF'
 zcat /usr/share/doc/zabbix-proxy-mysql*/schema.sql.gz |  mysql -uzabbix -p'zabbixDBpass' zabbix_proxy
 mysql -uroot -p'rootDBpass' zabbix_proxy -e "set global innodb_strict_mode='ON';"
 
+echo 'Настройка zabbix_proxy.conf'
 sed -i 's/Server=127.0.0.1/Server=88.135.48.186/' /etc/zabbix/zabbix_proxy.conf
 sed -i 's/Hostname=Zabbix proxy/Hostname=Proxy_0X/' /etc/zabbix/zabbix_proxy.conf
 sed -i 's/# DBPassword=/DBPassword=zabbixDBpass/' /etc/zabbix/zabbix_proxy.conf
@@ -59,6 +59,7 @@ firewall-cmd -–add-service=ssh --permanent
 firewall-cmd --add-service={http,https} --permanent
 firewall-cmd --add-port={10051/tcp,10050/tcp} --permanent
 firewall-cmd --zone=public --add-service=mysql --permanent
+firewall-cmd --add-service=cockpit --permanent
 
 firewall-cmd --reload
 reboot
